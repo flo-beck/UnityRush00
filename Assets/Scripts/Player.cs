@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
 
 	void fireWeapon(){
 		if (weapon) {
-			weapon.fire(transform.position, ammoLaunchPos.transform.position);
+			weapon.fire(this);
 		}
 	}
 

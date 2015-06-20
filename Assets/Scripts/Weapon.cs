@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviour {
 	public weaponType type;
 	public int ammo;
 	public Ammunition a;
+	public int ammoPerShot;
 
 
 	private Vector3 mouse;
@@ -50,16 +51,25 @@ public class Weapon : MonoBehaviour {
 		Destroy (tmprb);
 	}
 
-	public void fire(Vector3 playerPos, Vector3 launchPos){
-		if (type == weaponType.GUN && ammo > 0){
-			Debug.Log("LAUNCH MISSILES");
-			
-//			Vector3 newPos = mouse - playerPos;
-//			newPos.Normalize();
-//			newPos = playerPos + newPos * 1f;
+	public void fire(Player p){
+		if (type == weaponType.GUN)
+			StartCoroutine (launchMissiles (p));
+		else
+			swipe (p);
+	}
 
-			GameObject.Instantiate(a, launchPos, Quaternion.identity);
+	public IEnumerator launchMissiles(Player p){
+		for (int i = 0; i < ammoPerShot; i++){
+			if (type == weaponType.GUN && ammo > 0) {
+				GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
+				ammo--;
+			}
+			yield return new WaitForSeconds (0.05f);
 		}
+	}
+
+	public void swipe(Player p){
+		GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
 	}
 
 }
