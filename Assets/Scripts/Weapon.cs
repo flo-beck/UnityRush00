@@ -6,17 +6,18 @@ public class Weapon : MonoBehaviour {
 	public Sprite mainImg;
 	public Sprite heldImg;
 	SpriteRenderer sr;
-	Rigidbody2D rb;
+	//Rigidbody2D rb;
 
 
 	// Use this for initialization
 	void Start () {
 		sr = gameObject.GetComponent<SpriteRenderer>(); 
-		rb = gameObject.GetComponent<Rigidbody2D>(); 
+		//rb = gameObject.GetComponent<Rigidbody2D>(); 
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		//rb.AddRelativeForce (Vector3.down * 2.0f);
 	
 	}
 
@@ -26,11 +27,14 @@ public class Weapon : MonoBehaviour {
 		}
 	}
 
-	public void getThrown(){
-
+	public IEnumerator throwWeapon(Vector3 mouse) {
+		Rigidbody2D tmprb = this.gameObject.AddComponent<Rigidbody2D> (); // Add the rigidbody.
 		sr.enabled = true;
-		//get direction to throw
-		rb.AddRelativeForce(Vector3.forward * 100);
+		tmprb.mass = 2; 
+		tmprb.drag = 5;
+		tmprb.AddTorque (10);
+		tmprb.AddRelativeForce (mouse * 2.0f, ForceMode2D.Impulse);
+		yield return new WaitForSeconds (2f);
+		Destroy (tmprb);
 	}
-
 }

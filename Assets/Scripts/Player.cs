@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
 	
 		//face mouse
 		mouse = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		mouse.z = 0;
+		Debug.Log ("mouse pos: " + mouse);
 		transform.rotation = Quaternion.LookRotation (Vector3.forward, transform.position - mouse);
 
 		//move
@@ -41,7 +43,7 @@ public class Player : MonoBehaviour
 			// just use 1 to set the direction.
 			velUp.y = 0.5f;
 			vel += velUp;
-			rb.AddForce (transform.forward * Time.deltaTime);
+			//rb.AddForce (transform.forward * Time.deltaTime);
 		} else if (Input.GetKey (KeyCode.S)) {
 			Vector3 velDown = new Vector3 ();
 			velDown.y = -0.5f;
@@ -94,11 +96,9 @@ public class Player : MonoBehaviour
 
 	void dropWeapon(){
 		if (weapon) {
-			//throw weapon away
-			Debug.Log("THROW WEAPON");
 			weaponImg.sprite = null;
 			weapon.transform.position = transform.position;
-			weapon.getThrown();
+			StartCoroutine(weapon.throwWeapon(mouse));
 
 		}
 
