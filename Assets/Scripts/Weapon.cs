@@ -5,19 +5,30 @@ public class Weapon : MonoBehaviour {
 
 	public Sprite mainImg;
 	public Sprite heldImg;
-	SpriteRenderer sr;
-	//Rigidbody2D rb;
+	public weaponType type;
+	public int ammo;
+	public Ammunition a;
 
+
+	private Vector3 mouse;
+
+	public enum weaponType {
+		GUN,
+		BLADE
+	}
+
+	SpriteRenderer sr;
 
 	// Use this for initialization
 	void Start () {
 		sr = gameObject.GetComponent<SpriteRenderer>(); 
-		//rb = gameObject.GetComponent<Rigidbody2D>(); 
+
+		mouse = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		mouse.z = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//rb.AddRelativeForce (Vector3.down * 2.0f);
 	
 	}
 
@@ -33,8 +44,22 @@ public class Weapon : MonoBehaviour {
 		tmprb.drag = 5;
 		tmprb.AddTorque (5);
 		Vector3 direction = mouse - transform.position;
-		tmprb.AddRelativeForce (direction * 3.0f, ForceMode2D.Impulse);
+		direction.Normalize ();
+		tmprb.AddRelativeForce (direction * 12.0f, ForceMode2D.Impulse);
 		yield return new WaitForSeconds (2f);
 		Destroy (tmprb);
 	}
+
+	public void fire(Vector3 playerPos, Vector3 launchPos){
+		if (type == weaponType.GUN && ammo > 0){
+			Debug.Log("LAUNCH MISSILES");
+			
+//			Vector3 newPos = mouse - playerPos;
+//			newPos.Normalize();
+//			newPos = playerPos + newPos * 1f;
+
+			GameObject.Instantiate(a, launchPos, Quaternion.identity);
+		}
+	}
+
 }

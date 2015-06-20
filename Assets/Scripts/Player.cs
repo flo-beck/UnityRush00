@@ -4,12 +4,13 @@ using System.Collections;
 public class Player : MonoBehaviour
 {
 
-	public float speed = 5;
+	public float speed;
 	public Vector3 velocity;
 	public Rigidbody2D rb;
 	public Animator animator;
 	public SpriteRenderer weaponImg;
 	public Weapon weapon;
+	public GameObject ammoLaunchPos;
 
 	private Vector3 mouse;
 
@@ -88,8 +89,15 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	void OnCollisionEnter2D (Collision2D collision)
+	{
+//		if (collision.gameObject.tag == "ammo")
+//			Destroy (gameObject);
+	}
+
 	void fireWeapon(){
 		if (weapon) {
+			weapon.fire(transform.position, ammoLaunchPos.transform.position);
 		}
 	}
 
