@@ -3,21 +3,19 @@ using System.Collections;
 
 public class Ammunition : MonoBehaviour
 {
-
+	
 	public float speed;
 
 	public Vector3 mousePos;
 	public Vector3 direction;
-
 	private Rigidbody2D rb;
-
 	public shotType type;
 
 	public enum shotType {
 		MISSILE,
 		ACTION
 	}
-
+	
 	// Use this for initialization
 	void Start ()
 	{
@@ -41,8 +39,7 @@ public class Ammunition : MonoBehaviour
 
 	void OnCollisionEnter2D (Collision2D collision)
 	{
-		if (collision.gameObject.tag != "myAmmo" && collision.gameObject.tag != "player")
-			Destroy (gameObject);
+		Destroy (gameObject);
 	}
 
 	public IEnumerator swipe() {

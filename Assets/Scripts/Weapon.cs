@@ -9,9 +9,8 @@ public class Weapon : MonoBehaviour {
 	public int ammo;
 	public Ammunition a;
 	public int ammoPerShot;
-
-
-	private Vector3 mouse;
+	public AudioSource fireSound;
+	public AudioSource drySound;
 
 	public enum weaponType {
 		GUN,
@@ -19,7 +18,8 @@ public class Weapon : MonoBehaviour {
 	}
 
 	SpriteRenderer sr;
-
+	private Vector3 mouse;
+	
 	// Use this for initialization
 	void Start () {
 		sr = gameObject.GetComponent<SpriteRenderer>(); 
@@ -52,8 +52,10 @@ public class Weapon : MonoBehaviour {
 	}
 
 	public void fire(Player p){
-		if (type == weaponType.GUN)
+		a.gameObject.layer = gameObject.layer; // set ammo to same layer as me
+		if (type == weaponType.GUN) {
 			StartCoroutine (launchMissiles (p));
+		}
 		else
 			swipe (p);
 	}
@@ -61,14 +63,18 @@ public class Weapon : MonoBehaviour {
 	public IEnumerator launchMissiles(Player p){
 		for (int i = 0; i < ammoPerShot; i++){
 			if (type == weaponType.GUN && ammo > 0) {
+				fireSound.Play ();
 				GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
 				ammo--;
-			}
+			} else 
+				drySound.Play();
+
 			yield return new WaitForSeconds (0.05f);
 		}
 	}
 
 	public void swipe(Player p){
+		fireSound.Play ();
 		GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
 	}
 

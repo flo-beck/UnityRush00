@@ -12,6 +12,10 @@ public class Player : MonoBehaviour
 	public Weapon weapon;
 	public GameObject ammoLaunchPos;
 
+	public AudioSource reloadSound;
+	public AudioSource ejectSound;
+	public AudioSource dieSound;
+
 	private Vector3 mouse;
 
 	void Awake ()
@@ -83,16 +87,20 @@ public class Player : MonoBehaviour
 
 	void OnTriggerStay2D (Collider2D other)
 	{
+		//PICK UP WEAPON
 		if (other.gameObject.tag == "weapon" && Input.GetKeyDown (KeyCode.E)) {	
+			reloadSound.Play();
 			weapon = other.gameObject.GetComponent<Weapon> ();
+			weapon.gameObject.layer = gameObject.layer;
 			weaponImg.sprite = weapon.heldImg;
 		}
 	}
 
 	void OnCollisionEnter2D (Collision2D collision)
 	{
-//		if (collision.gameObject.tag == "ammo")
-//			Destroy (gameObject);
+		if (collision.gameObject.tag == "ammo") {
+			StartCoroutine(die ());
+		}
 	}
 
 	void fireWeapon(){
@@ -103,12 +111,19 @@ public class Player : MonoBehaviour
 
 	void dropWeapon(){
 		if (weapon) {
+			ejectSound.Play();
+			weapon.gameObject.layer = 15; 
 			weaponImg.sprite = null;
 			weapon.transform.position = transform.position;
 			StartCoroutine(weapon.throwWeapon(mouse));
 
 		}
+	}
 
+	IEnumerator die(){
+		dieSound.Play();
+		yield return new WaitForSeconds (1.9f);
+		Destroy (gameObject);
 	}
 
 }
