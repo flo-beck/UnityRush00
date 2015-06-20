@@ -32,7 +32,6 @@ public class Player : MonoBehaviour
 		//face mouse
 		mouse = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		mouse.z = 0;
-		Debug.Log ("mouse pos: " + mouse);
 		transform.rotation = Quaternion.LookRotation (Vector3.forward, transform.position - mouse);
 
 		//move

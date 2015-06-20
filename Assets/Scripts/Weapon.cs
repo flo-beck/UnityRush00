@@ -30,10 +30,10 @@ public class Weapon : MonoBehaviour {
 	public IEnumerator throwWeapon(Vector3 mouse) {
 		Rigidbody2D tmprb = this.gameObject.AddComponent<Rigidbody2D> (); // Add the rigidbody.
 		sr.enabled = true;
-		tmprb.mass = 2; 
 		tmprb.drag = 5;
-		tmprb.AddTorque (10);
-		tmprb.AddRelativeForce (mouse * 2.0f, ForceMode2D.Impulse);
+		tmprb.AddTorque (5);
+		Vector3 direction = mouse - transform.position;
+		tmprb.AddRelativeForce (direction * 3.0f, ForceMode2D.Impulse);
 		yield return new WaitForSeconds (2f);
 		Destroy (tmprb);
 	}
