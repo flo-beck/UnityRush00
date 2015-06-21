@@ -11,6 +11,7 @@ public class Weapon : MonoBehaviour {
 	public int ammoPerShot;
 	public AudioSource fireSound;
 	public AudioSource drySound;
+	public string weaponName;
 
 	public enum weaponType {
 		GUN,

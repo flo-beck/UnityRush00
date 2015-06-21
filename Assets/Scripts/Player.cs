@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Player : MonoBehaviour
@@ -18,9 +19,13 @@ public class Player : MonoBehaviour
 
 	private Vector3 mouse;
 
+	public Text WeaponText;
+	public Text AmmoText;
+
+	string noWeapon = "NO WEAPON";
+
 	void Awake ()
 	{
-
 	}
 
 	// Use this for initialization
@@ -28,6 +33,8 @@ public class Player : MonoBehaviour
 	{
 		rb = GetComponent<Rigidbody2D> ();
 		//animator = GetComponent<Animator>();
+		WeaponText.text = noWeapon;
+		AmmoText.text = "-";
 	}
 	
 	// Update is called once per frame
@@ -83,6 +90,13 @@ public class Player : MonoBehaviour
 		else if (Input.GetMouseButtonDown (1))
 			dropWeapon ();
 
+		//keep text uptodate
+		if (weapon) {
+			if (weapon.type == Weapon.weaponType.GUN)
+				AmmoText.text = weapon.ammo.ToString ();
+			else
+				AmmoText.text = "-";
+		}
 	}
 
 	void OnTriggerStay2D (Collider2D other)
@@ -93,6 +107,7 @@ public class Player : MonoBehaviour
 			weapon = other.gameObject.GetComponent<Weapon> ();
 			weapon.gameObject.layer = gameObject.layer;
 			weaponImg.sprite = weapon.heldImg;
+			WeaponText.text = weapon.weaponName;
 		}
 	}
 
@@ -116,14 +131,18 @@ public class Player : MonoBehaviour
 			weaponImg.sprite = null;
 			weapon.transform.position = transform.position;
 			StartCoroutine(weapon.throwWeapon(mouse));
-
+			weapon = null;
+			WeaponText.text = noWeapon;
+			AmmoText.text = "-";
 		}
 	}
 
 	IEnumerator die(){
 		dieSound.Play();
 		yield return new WaitForSeconds (1.9f);
-		Destroy (gameObject);
+//		Destroy (gameObject);
+		gameObject.SetActive (false);
 	}
+
 
 }
