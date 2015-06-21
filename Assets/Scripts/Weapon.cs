@@ -44,7 +44,6 @@ public class Weapon : MonoBehaviour {
 		Rigidbody2D tmprb = this.gameObject.AddComponent<Rigidbody2D> (); // Add the rigidbody.
 		sr.enabled = true;
 		tmprb.drag = 5;
-		//tmprb.AddTorque (5);
 		Vector3 direction = mouse - transform.position;
 		direction.Normalize ();
 		tmprb.AddRelativeForce (direction * 12.0f, ForceMode2D.Impulse);
