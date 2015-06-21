@@ -6,14 +6,17 @@ public class GameManager : MonoBehaviour
 {
 
 	public Player player;
-	public Enemy[] enemies;
+	public EnemyScript[] enemies;
 	public GameObject endGamePanel;
 	public Text winLoseText;
-
+	public Text WeaponText;
+	public Text AmmoText;
+	string noWeapon = "NO WEAPON";
 
 	// Use this for initialization
 	void Start ()
 	{
+		enemies =  GetComponents<EnemyScript>();
 	
 	}
 	
@@ -21,10 +24,25 @@ public class GameManager : MonoBehaviour
 	void Update ()
 	{
 
-		if (player && !player.gameObject.activeSelf) {
-			setGameLose ();
-		} else if (enemies.Length == 0) {  //OR REACH TRIGGER END GAME POINT
-			//setGameWin ();
+		if (player) {
+			if (!player.gameObject.activeSelf)
+				setGameLose ();
+			else if (enemies.Length == 0)  //OR REACH TRIGGER END GAME POINT
+				setGameWin ();
+
+
+			if (player.weapon) {
+				Weapon w = player.weapon;
+				WeaponText.text = w.weaponName;
+				if (w.type == Weapon.weaponType.GUN) {
+					AmmoText.text = w.ammo.ToString ();
+				} else {
+					AmmoText.text = "-";
+				} 
+			} else {
+				WeaponText.text = noWeapon;
+				AmmoText.text = "-";
+			}
 		}
 	}
 
@@ -32,7 +50,7 @@ public class GameManager : MonoBehaviour
 	{
 		winLoseText.text = "GAME\nOVER";
 		endGamePanel.SetActive (true);
-		Destroy (player.gameObject);
+		player.gameObject.SetActive (false);
 	}
 
 	private void setGameWin ()
@@ -42,11 +60,13 @@ public class GameManager : MonoBehaviour
 		Destroy (player.gameObject);
 	}
 
-	public void restartGame(){ 
+	public void restartGame ()
+	{ 
 		Application.LoadLevel (1);
 	}
 
-	public void backToMenu(){ 
+	public void backToMenu ()
+	{ 
 		Application.LoadLevel (0);
 	}
 

@@ -19,11 +19,6 @@ public class Player : MonoBehaviour
 
 	private Vector3 mouse;
 
-	public Text WeaponText;
-	public Text AmmoText;
-
-	string noWeapon = "NO WEAPON";
-
 	void Awake ()
 	{
 	}
@@ -33,8 +28,6 @@ public class Player : MonoBehaviour
 	{
 		rb = GetComponent<Rigidbody2D> ();
 		//animator = GetComponent<Animator>();
-		WeaponText.text = noWeapon;
-		AmmoText.text = "-";
 	}
 	
 	// Update is called once per frame
@@ -73,8 +66,6 @@ public class Player : MonoBehaviour
 		}
 		
 		// check if player wants to move at all. Don't check exactly for 0 to avoid rounding errors
-		// (magnitude will be 0, 1 or sqrt(2) here)
-	
 		if (vel.magnitude > 0.001) {
 			Vector3.Normalize (vel);
 			vel *= speed;
@@ -90,31 +81,24 @@ public class Player : MonoBehaviour
 		else if (Input.GetMouseButtonDown (1))
 			dropWeapon ();
 
-		//keep text uptodate
-		if (weapon) {
-			if (weapon.type == Weapon.weaponType.GUN)
-				AmmoText.text = weapon.ammo.ToString ();
-			else
-				AmmoText.text = "-";
-		}
-	}
-
-	void OnTriggerStay2D (Collider2D other)
-	{
-		//PICK UP WEAPON
-		if (other.gameObject.tag == "weapon" && Input.GetKeyDown (KeyCode.E)) {	
-			reloadSound.Play();
-			weapon = other.gameObject.GetComponent<Weapon> ();
-			weapon.gameObject.layer = gameObject.layer;
-			weaponImg.sprite = weapon.heldImg;
-			WeaponText.text = weapon.weaponName;
+		//pick up weapon
+		if (Input.GetKeyDown (KeyCode.E)) {
+			RaycastHit2D hit = Physics2D.Raycast (transform.position, Vector3.down, 100, 1 << 15); //WEAPON LAYER
+			if (!weapon && hit.collider != null){
+				reloadSound.Play();
+				weapon = hit.collider.gameObject.GetComponent<Weapon> ();
+				SpriteRenderer weaponSprite = weapon.GetComponent<SpriteRenderer>();
+				weaponSprite.enabled = false;
+				weapon.gameObject.layer = gameObject.layer;
+				weaponImg.sprite = weapon.heldImg;
+			}
 		}
 	}
 
 	void OnCollisionEnter2D (Collision2D collision)
 	{
 		if (collision.gameObject.tag == "ammo") {
-			StartCoroutine(die ());
+			playerDie();
 		}
 	}
 
@@ -132,17 +116,12 @@ public class Player : MonoBehaviour
 			weapon.transform.position = transform.position;
 			StartCoroutine(weapon.throwWeapon(mouse));
 			weapon = null;
-			WeaponText.text = noWeapon;
-			AmmoText.text = "-";
 		}
 	}
 
-	IEnumerator die(){
-		dieSound.Play();
-		yield return new WaitForSeconds (1.9f);
-//		Destroy (gameObject);
+	public void playerDie(){
+		AudioSource.PlayClipAtPoint(dieSound.clip, transform.position);;
 		gameObject.SetActive (false);
 	}
-
-
+	
 }

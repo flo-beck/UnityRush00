@@ -40,17 +40,11 @@ public class Weapon : MonoBehaviour {
 			t += Time.deltaTime;
 	}
 
-	void OnTriggerStay2D(Collider2D other) {
-		if (other.gameObject.tag == "player" && Input.GetKeyDown (KeyCode.E)) {
-			sr.enabled = false;
-		}
-	}
-
 	public IEnumerator throwWeapon(Vector3 mouse) {
 		Rigidbody2D tmprb = this.gameObject.AddComponent<Rigidbody2D> (); // Add the rigidbody.
 		sr.enabled = true;
 		tmprb.drag = 5;
-		tmprb.AddTorque (5);
+		//tmprb.AddTorque (5);
 		Vector3 direction = mouse - transform.position;
 		direction.Normalize ();
 		tmprb.AddRelativeForce (direction * 12.0f, ForceMode2D.Impulse);
@@ -61,28 +55,31 @@ public class Weapon : MonoBehaviour {
 	public void fire(Vector3 ammoLaunchPos, Transform shooter){
 		a.gameObject.layer = gameObject.layer; // set ammo to same layer as me
 		if (type == weaponType.GUN) {
-			StartCoroutine (launchMissiles (ammoLaunchPos, shooter));
+			if (enemy == true)
+				enemyFire(ammoLaunchPos, shooter);
+			else
+				StartCoroutine (launchMissiles (ammoLaunchPos, shooter));
 		}
 		else
 			swipe (ammoLaunchPos, shooter);
 	}
 
+	public void enemyFire(Vector3 ammoLaunchPos, Transform shooter){
+		if (t >= coolDown){
+			fireSound.Play ();
+			GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
+			t = 0;
+		} 
+	}
+
 	public IEnumerator launchMissiles(Vector3 ammoLaunchPos, Transform shooter){
 		for (int i = 0; i < ammoPerShot; i++){
-			if (enemy == true){ // AN ENEMY WHO FIRES
-				if (t >= coolDown){
-					fireSound.Play ();
-					GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
-					t = 0;
-				} 
-			} else { // THE PLAYER FIRES
-				if (ammo > 0) {
-					fireSound.Play ();
-					GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
-					ammo--;
-				} else 
-					drySound.Play();
-			}	
+			if (ammo > 0) {
+				fireSound.Play ();
+				GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
+				ammo--;
+			} else 
+				drySound.Play();
 			yield return new WaitForSeconds (0.05f);
 		}
 	}
