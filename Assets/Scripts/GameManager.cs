@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
 		if (!player.gameObject.activeSelf) {
 			setGameLose ();
 		} else if (enemies.Length == 0) {  //OR REACH TRIGGER END GAME POINT
-			setGameWin ();
+			//setGameWin ();
 		}
 
 		//set flashing background
@@ -33,13 +33,13 @@ public class GameManager : MonoBehaviour
 
 	private void setGameLose ()
 	{
-		winLoseText.text = "GAME OVER";
+		winLoseText.text = "GAME\nOVER";
 		endGamePanel.SetActive (true);
 	}
 
 	private void setGameWin ()
 	{
-		winLoseText.text = "YOU WIN";
+		winLoseText.text = "YOU\nWIN";
 		endGamePanel.SetActive (true);
 	}
 
