@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
 
 	void fireWeapon(){
 		if (weapon) {
-			weapon.fire(this);
+			weapon.fire(ammoLaunchPos.transform.position, transform);
 		}
 	}
 

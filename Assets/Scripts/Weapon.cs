@@ -12,6 +12,10 @@ public class Weapon : MonoBehaviour {
 	public AudioSource fireSound;
 	public AudioSource drySound;
 	public string weaponName;
+	public bool enemy;
+
+	public float coolDown;
+	private float t;
 
 	public enum weaponType {
 		GUN,
@@ -32,6 +36,8 @@ public class Weapon : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+		if (enemy)
+			t += Time.deltaTime;
 	}
 
 	void OnTriggerStay2D(Collider2D other) {
@@ -52,31 +58,38 @@ public class Weapon : MonoBehaviour {
 		Destroy (tmprb);
 	}
 
-	public void fire(Player p){
+	public void fire(Vector3 ammoLaunchPos, Transform shooter){
 		a.gameObject.layer = gameObject.layer; // set ammo to same layer as me
 		if (type == weaponType.GUN) {
-			StartCoroutine (launchMissiles (p));
+			StartCoroutine (launchMissiles (ammoLaunchPos, shooter));
 		}
 		else
-			swipe (p);
+			swipe (ammoLaunchPos, shooter);
 	}
 
-	public IEnumerator launchMissiles(Player p){
+	public IEnumerator launchMissiles(Vector3 ammoLaunchPos, Transform shooter){
 		for (int i = 0; i < ammoPerShot; i++){
-			if (type == weaponType.GUN && ammo > 0) {
-				fireSound.Play ();
-				GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
-				ammo--;
-			} else 
-				drySound.Play();
-
+			if (enemy == true){ // AN ENEMY WHO FIRES
+				if (t >= coolDown){
+					fireSound.Play ();
+					GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
+					t = 0;
+				} 
+			} else { // THE PLAYER FIRES
+				if (ammo > 0) {
+					fireSound.Play ();
+					GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
+					ammo--;
+				} else 
+					drySound.Play();
+			}	
 			yield return new WaitForSeconds (0.05f);
 		}
 	}
 
-	public void swipe(Player p){
+	public void swipe(Vector3 ammoLaunchPos, Transform shooter){
 		fireSound.Play ();
-		GameObject.Instantiate (a, p.ammoLaunchPos.transform.position, p.transform.rotation);
+		GameObject.Instantiate (a, ammoLaunchPos, shooter.rotation);
 	}
 
 }
